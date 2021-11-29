@@ -1,5 +1,6 @@
 target/
 /src/main/resources/application.yml
+/src/main/resources/upload/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

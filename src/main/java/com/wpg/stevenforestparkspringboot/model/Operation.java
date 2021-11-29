@@ -1,10 +1,9 @@
 package com.wpg.stevenforestparkspringboot.model;
 
 import lombok.Data;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.*;
 
-import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
@@ -130,4 +129,5 @@ public class Operation implements Serializable {
 	@MultiField(mainField = @Field(type = FieldType.Text, name="userMail"),
 			otherFields = { @InnerField(suffix = "keyword", type = FieldType.Keyword, ignoreAbove = 256) })
 	private String userMail;
+
 }
