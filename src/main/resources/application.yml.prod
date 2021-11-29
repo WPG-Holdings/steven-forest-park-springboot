@@ -9,3 +9,19 @@ spring:
       enabled: 'true'
       max-file-size: '100MB'
       max-request-size: '100MB'
+  elasticsearch:
+    rest:
+      uris: 'https://hackthon.es.us-central1.gcp.cloud.es.io:9243'
+      username: elastic
+      password: UtGXh1wvmQzYXV3LMkdGfcpz
+
+elastic-cloud:
+  userName: "elastic"
+  password: "UtGXh1wvmQzYXV3LMkdGfcpz"
+  host: "hackthon.es.us-central1.gcp.cloud.es.io"
+  port: 9243
+
+upload:
+  file:
+    store:
+      path: '/usr1/steven-forest-park-springboot/src/main/resources/upload'
