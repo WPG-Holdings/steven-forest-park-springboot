@@ -9,7 +9,7 @@ RUN mv -f $RESOURCES_PATH/application.yml.prod $RESOURCES_PATH/application.yml
 WORKDIR /
 RUN mvn clean package spring-boot:repackage -Dmaven.test.skip=true
 
-FROM openjdk:11-jdk-alpine
+FROM openjdk:11-jdk
 
 COPY --from=build /target/steven-forest-park-springboot-0.0.1-SNAPSHOT.war /steven-forest-park-springboot.war
 
