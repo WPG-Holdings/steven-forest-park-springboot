@@ -7,8 +7,8 @@ import org.springframework.data.elasticsearch.annotations.*;
 import java.io.Serializable;
 
 /**
- * @author Samuel Luo
- * A operation.
+ * @author Fanny Lee
+ * @date 2021/11/29
  */
 @Data
 @Document(indexName = "operation")
