@@ -21,6 +21,9 @@ elastic-cloud:
   host: "hackthon.es.us-central1.gcp.cloud.es.io"
   port: 9243
 
+cors:
+  allowed-origin-urls: http://localhost:7777, http://10.8.96.8:7777
+
 upload:
   file:
     store:

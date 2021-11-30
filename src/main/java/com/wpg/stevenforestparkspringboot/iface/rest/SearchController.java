@@ -2,6 +2,7 @@ package com.wpg.stevenforestparkspringboot.iface.rest;
 
 import com.wpg.stevenforestparkspringboot.model.Detail;
 import com.wpg.stevenforestparkspringboot.model.Operation;
+import com.wpg.stevenforestparkspringboot.model.QueryBody;
 import com.wpg.stevenforestparkspringboot.service.ElasticCloudService;
 import com.wpg.stevenforestparkspringboot.service.UploadService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,8 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -24,6 +27,7 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,17 +59,33 @@ public class SearchController {
     @Autowired
     RestHighLevelClient client;
 
-    @GetMapping("query")
-    public ResponseEntity<?> query(@RequestParam(value = "fieldName") String fieldName,
-                                   @RequestParam(value = "value") String value,
-                                   @RequestParam(required = false, value = "page", defaultValue = "0") Integer page,
-                                   @RequestParam(required = false, value = "size", defaultValue = "10") Integer size) {
+    @PostMapping("query")
+    public ResponseEntity<?> query(@RequestBody QueryBody queryBody ) {
         try {
-            TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery(fieldName, value);
+            BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+            // Must condition
+            Map<String, String> mustQueryMap = queryBody.getMustQueryMap();
+            for (Map.Entry<String, String> entry : mustQueryMap.entrySet()){
+                boolQueryBuilder.must(QueryBuilders.termQuery(entry.getKey(), entry.getValue()));
+            }
+            if (queryBody.getShouldQueryMap() != null){
+                Map<String, String> shouldQueryMap = queryBody.getShouldQueryMap();
+                for (Map.Entry<String, String> entry : shouldQueryMap.entrySet()) {
+                    boolQueryBuilder.should(QueryBuilders.termQuery(entry.getKey(), entry.getValue()));
+                }
+            }
+
+            if (queryBody.getNotQueryMap() != null){
+                Map<String, String> notQueryMap = queryBody.getShouldQueryMap();
+                for (Map.Entry<String, String> entry : notQueryMap.entrySet()) {
+                    boolQueryBuilder.mustNot(QueryBuilders.termQuery(entry.getKey(), entry.getValue()));
+                }
+            }
             NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
-            nativeSearchQueryBuilder.withQuery(termQueryBuilder).withPageable(PageRequest.of(page, size));
+            nativeSearchQueryBuilder.withQuery(boolQueryBuilder).withPageable(PageRequest.of(queryBody.getPage(), queryBody.getSize()));
             NativeSearchQuery nativeSearchQuery = nativeSearchQueryBuilder.build();
             SearchHits<Operation> search = elasticsearchOperations.search(nativeSearchQuery, Operation.class);
+
 
             return new ResponseEntity<>(search, new HttpHeaders(), HttpStatus.OK);
         } catch (Exception e) {
