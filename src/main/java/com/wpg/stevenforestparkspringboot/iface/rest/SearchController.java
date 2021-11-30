@@ -2,6 +2,7 @@ package com.wpg.stevenforestparkspringboot.iface.rest;
 
 import com.wpg.stevenforestparkspringboot.model.Detail;
 import com.wpg.stevenforestparkspringboot.model.Operation;
+import com.wpg.stevenforestparkspringboot.service.ElasticCloudService;
 import com.wpg.stevenforestparkspringboot.service.UploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
@@ -91,22 +92,10 @@ public class SearchController {
         }
     }
 
+    @Autowired
+    ElasticCloudService elasticCloudService;
     @GetMapping("hotKeywordCounts")
-    public ResponseEntity<HashMap<String, String>> getFunctionCount() throws IOException {
-        SearchRequest searchRequest = new SearchRequest();
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.size(0);
-        TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("function_counts").field("function.keyword");
-        searchSourceBuilder.aggregation(termsAggregationBuilder);
-        searchRequest.source(searchSourceBuilder);
-        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-        Terms termsAggs = searchResponse.getAggregations().get("function_counts");
-        List<? extends Terms.Bucket> buckets = termsAggs.getBuckets();
-        HashMap<String, String> keywordCountHashMap = new HashMap<>();
-        for (Terms.Bucket bucket : buckets) {
-            Long counts = bucket.getDocCount()/2;
-            keywordCountHashMap.put(bucket.getKeyAsString(), counts.toString());
-        }
-        return ResponseEntity.ok().body(keywordCountHashMap);
+    public ResponseEntity<List<Object>> getFunctionCount(@RequestParam("topNumber") int topNumber) throws IOException {
+        return ResponseEntity.ok().body(elasticCloudService.getHotKeywordMap(topNumber));
     }
 }
