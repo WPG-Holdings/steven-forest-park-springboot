@@ -73,17 +73,14 @@ public class SearchController {
         }
     }
 
-    @GetMapping(path = "/detail/{azureId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> detail(@PathVariable(name = "azureId") Integer azureId) {
+    @GetMapping(path = "/detail/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> detail(@PathVariable(name = "title") String title) {
         try {
-            TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("azureID", azureId);
+            TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("title", title);
             NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
             nativeSearchQueryBuilder.withQuery(termQueryBuilder);
             NativeSearchQuery nativeSearchQuery = nativeSearchQueryBuilder.build();
-            SearchHits<Operation> search = elasticsearchOperations.search(nativeSearchQuery, Operation.class, IndexCoordinates.of("op_index"));
-            for (SearchHit<Operation> hit: search){
-                System.out.println("content = " + hit.getContent());
-            }
+            SearchHits<Detail> search = elasticsearchOperations.search(nativeSearchQuery, Detail.class);
 
             return new ResponseEntity<>(search, new HttpHeaders(), HttpStatus.OK);
         } catch (Exception e) {

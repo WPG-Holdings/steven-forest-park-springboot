@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @date 2021/11/30
  */
 @Data
-@Document(indexName = "operation_index")
+@Document(indexName = "operation")
 public class KeywordTag implements Serializable {
 	@Field(type = FieldType.Keyword, name = "sys")
 	private String sys;
