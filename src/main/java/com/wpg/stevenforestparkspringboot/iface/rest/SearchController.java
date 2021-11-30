@@ -42,6 +42,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping(path = "search")
 public class SearchController {
 
