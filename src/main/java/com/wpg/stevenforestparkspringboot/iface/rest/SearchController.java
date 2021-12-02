@@ -66,19 +66,19 @@ public class SearchController {
             // Must condition
             Map<String, String> mustQueryMap = queryBody.getMustQueryMap();
             for (Map.Entry<String, String> entry : mustQueryMap.entrySet()){
-                boolQueryBuilder.must(QueryBuilders.termQuery(entry.getKey(), entry.getValue()));
+                boolQueryBuilder.must(QueryBuilders.matchQuery(entry.getKey(), entry.getValue()));
             }
             if (queryBody.getShouldQueryMap() != null){
                 Map<String, String> shouldQueryMap = queryBody.getShouldQueryMap();
                 for (Map.Entry<String, String> entry : shouldQueryMap.entrySet()) {
-                    boolQueryBuilder.should(QueryBuilders.termQuery(entry.getKey(), entry.getValue()));
+                    boolQueryBuilder.should(QueryBuilders.matchQuery(entry.getKey(), entry.getValue()));
                 }
             }
 
             if (queryBody.getNotQueryMap() != null){
                 Map<String, String> notQueryMap = queryBody.getShouldQueryMap();
                 for (Map.Entry<String, String> entry : notQueryMap.entrySet()) {
-                    boolQueryBuilder.mustNot(QueryBuilders.termQuery(entry.getKey(), entry.getValue()));
+                    boolQueryBuilder.mustNot(QueryBuilders.matchQuery(entry.getKey(), entry.getValue()));
                 }
             }
             NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
