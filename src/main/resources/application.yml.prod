@@ -21,7 +21,8 @@ elastic-cloud:
   port: 9243
 
 cors:
-  allowed-origin-urls: http://localhost:3000, http://10.8.96.8:3000
+  allowed-origin-urls: http://localhost:3000, http://10.8.96.8:3000, http://10.21.252.167:3000
+
 
 upload:
   file:
